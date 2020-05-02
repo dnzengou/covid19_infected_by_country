@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1588407586416.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1732921979",
+    "id" : "56072527",
+    "lastKnownWriteTime" : 1586690617,
+    "last_content_update" : 1586690617,
+    "path" : "~/Documents/programming/R/R_projects/covid19-visualisation_r/covid-19Model-R_infected_by_country/covid19_infected_by_country.R",
+    "project_path" : "covid19_infected_by_country.R",
+    "properties" : {
+    },
+    "relative_order" : 4,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

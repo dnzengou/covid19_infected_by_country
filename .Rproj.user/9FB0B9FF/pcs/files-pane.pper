@@ -1,0 +1,9 @@
+{
+    "path" : "~/Documents/programming/R/R_projects/covid19-visualisation_r/covid19_infected_by_country",
+    "sortOrder" : [
+        {
+            "ascending" : true,
+            "columnIndex" : 2
+        }
+    ]
+}
