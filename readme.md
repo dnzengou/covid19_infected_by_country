@@ -1,9 +1,10 @@
 # COVID-19 Modeling with R, SIR epidemiologic model experiments
 ## (credit: tomwilding)
 
-This models an SIR epidemic model using R, further details of the outputs can be found [here](https://tjwilding.wordpress.com/2020/03/20/epidemic-modelling-of-covid-19-in-the-uk-using-an-sir-model/)
+This models an SIR epidemic model using R, further details of the outputs can be found [here](https://github.com/dnzengou/covid19_infected_by_country.git)
 
-COVID-19 current cumulative data from the <https://www.ecdc.europa.eu/en> 
+
+COVID-19 current cumulative data from the <https://www.ecdc.europa.eu/en> and/or JHU aggregate. 
 
 ![Susceptibles - Infected - Recovered curves for Uk](covid19_sir-predictive_plots/Rplot_covid19-UK_sir-plot.png)
 
