@@ -5,15 +5,15 @@
     "dirty" : false,
     "encoding" : "UTF-8",
     "folds" : "",
-    "hash" : "0",
+    "hash" : "4034975659",
     "id" : "9F162257",
     "lastKnownWriteTime" : 1588407601,
     "last_content_update" : 1588407601211,
     "path" : "~/Documents/programming/R/R_projects/covid19-visualisation_r/covid-19Model-R_infected_by_country/covid19_infected_BE.R",
     "project_path" : "covid19_infected_BE.R",
     "properties" : {
-        "cursorPosition" : "161,0",
-        "scrollLine" : "156"
+        "cursorPosition" : "122,0",
+        "scrollLine" : "117"
     },
     "relative_order" : 3,
     "source_on_save" : false,

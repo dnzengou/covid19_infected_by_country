@@ -1,6 +1,10 @@
 {
-    "path" : "~/Documents/programming/R/R_projects/covid19-visualisation_r/covid19_infected_by_country",
+    "path" : "~/Documents/programming/R/R_projects/covid19-visualisation_r/covid-19Model-R_infected_by_country",
     "sortOrder" : [
+        {
+            "ascending" : false,
+            "columnIndex" : 4
+        },
         {
             "ascending" : true,
             "columnIndex" : 2

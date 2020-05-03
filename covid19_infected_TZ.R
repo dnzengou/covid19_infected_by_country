@@ -47,8 +47,8 @@ library(ggplot2); theme_set(theme_bw(base_size=16))
 # BE #Note. count starting as of march 1st when cases>1
 #Infected <- c(0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,8,13,23,50,109,169,200,239,267,314,314,559,689,886,1058,1243,1486,1795,2257,2815,3401,3743,4269,4937,6235,7284,9134,10836,11899,12775,13964,15348,16770,18431,19691,20814,22194,23403,24983,26667,28018,28018)
 
-# RW
-Infected <- c(5,7,8,8,17,17,19,36,40,41,50,54,60,70,70,75,82,84,89,102,104,105,105,110,110,118,120,126,127,134,136,138,143,144,147,147,150,153,154,176,183,191,207,212,225,243,249)
+# TZ
+Infected <- c(3,6,6,6,12,12,12,12,13,13,14,14,19,19,20,20,20,20,22,24,24,25,25,32,32,32,49,53,88,94,147,147,170,254,254,284,284,299,299,299,299,299,480,480,480)
 
 Day <- 1:(length(Infected)) # length of the infection period
 
@@ -60,7 +60,7 @@ Day <- 1:(length(Infected)) # length of the infection period
 #N <- 66990000 # pupulation of the FR
 #N <- 32820000 # pupulation of the US
 #N <- 11460000 # pupulation of the BE
-N <- 12210000 # pupulation of the RW
+N <- 56320000 # pupulation of the TZ
 
 # Plot coutnry's confirmed cases
 old <- par(mfrow = c(1, 2))
@@ -68,16 +68,7 @@ old <- par(mfrow = c(1, 2))
 plot(Day, Infected, type ="b")
 plot(Day, Infected, log = "y") # type b by default
 abline(lm(log10(Infected) ~ Day))
-title("Confirmed COVID-19 cases in RW, lin & log scales", outer = TRUE, line = -2)
-
-
-sir <- function(t, y, parms) {
-  beta <- parms[1]
-  gamma <- parms[2]
-  S <- y[1]
-  I <- y[2]
-  return(list(c(S = -beta * S * I, I = beta * S * I - gamma * I)))
-}
+title("Confirmed COVID-19 cases in TZ, lin & log scales", outer = TRUE, line = -2)
 
 
 # Population size: 1e6 (1 milliion) or 1e7 (10 millions)
@@ -104,7 +95,7 @@ R0 <- beta/gamma
 library(deSolve)
 
 # Grid where to evaluate
-max_time <- 150
+#max_time <- 150
 times <- seq(0, max_time, by=0.01)
 
 # time in days, prediction to up to 90 days (highly unlikely fact will confirm the hypothesis though)
@@ -113,17 +104,8 @@ fit <- data.frame(rk4(y = c(N - 10, 10), times = times, func = sir, parms = c(be
 col <- 1:3 # colour
 print(fit)
 
-#sink('fit1_RW_02052020.txt'); fit; sink()
-#write.csv(fit, "fit1_RW_02052020.csv")
-
-# Plot infection curve
-matplot(fit$time, fit[ , 2:3], type = "l", xlab = "Day", ylab = "Number of subjects", lwd = 2, lty = 1, col = col)
-matplot(fit$time, fit[ , 2:3], type = "l", xlab = "Day", ylab = "Number of subjects", lwd = 2, lty = 1, col = col, log = "y")
-
-points(Day, Infected)
-legend("bottomright", c("Susceptibles", "Infecteds"), lty = 1, lwd = 1, col = col, inset = 0.05)
-title("Predicted 2019-nCoV in RW (worst case), SIR", outer = TRUE, line = -2)
-
+#sink('fit1_TZ_03052020.txt'); fit; sink()
+#write.csv(fit, "fit1_TZ_03052020.csv")
 
 # Plot the ODE system.
 ## let's try with this sir model and extrapolate to maybe 90 days, via epidemiologic modeling
@@ -154,8 +136,8 @@ Opt$message
 
 Opt_par <- setNames(Opt$par, c("beta", "gamma"))
 print(Opt_par)
-#     beta     gamma 
-#0.5448481 0.4551519 
+#beta     gamma 
+#0.5592483 0.4407518 
 
 
 # Grid where to evaluate
@@ -164,24 +146,24 @@ times <- seq(0, max_time, by=0.01)
 
 # time in days, prediction to up to 90 days (highly unlikely fact will confirm the hypothesis though)
 #fit <- data.frame(ode(y = init, times = t, func = SIR, parms = Opt_par))
+## We are trying here another fitting method than with RK
 fit <- data.frame(ode(y = init, times = times, func = SIR, parms = Opt_par))
 col <- 1:3 # colour
 print(fit)
 
-#sink('fit0_RW_02052020.txt'); fit; sink()
-#write.csv(fit, "fit0_RW_02052020.csv")
+#sink('fit0_TZ_03052020.txt'); fit; sink()
+#write.csv(fit, "fit0_TZ_03052020.csv")
 
 
 # Plot infection curve
 matplot(fit$time, fit[ , 2:4], type = "l", xlab = "Day", ylab = "Number of subjects", lwd = 2, lty = 1, col = col)
-legend("bottomright", c("Susceptibles", "Infecteds", "Recovereds"), lty = 1, lwd = 1, col = col, inset = 0.05)
+legend("topright", c("Susceptibles", "Infecteds", "Recovereds"), lty = 1, lwd = 1, col = col, inset = 0.05)
 matplot(fit$time, fit[ , 2:4], type = "l", xlab = "Day", ylab = "Number of subjects", lwd = 2, lty = 1, col = col, log = "y")
 
 points(Day, Infected)
 #legend("bottomright", c("Susceptibles", "Infecteds", "Recovereds"), lty = 1, lwd = 1, col = col, inset = 0.05)
-title("Predicted 2019-nCoV in RW (worst case), SIR", outer = TRUE, line = -2)
+title("Predicted 2019-nCoV in TZ (worst case), SIR", outer = TRUE, line = -2)
 
-#Rplot0_covid19-RW-new-cases_02052020
 
 ## We can now solve the ODE system using the above parameters and an initial number of infectious of, say, 10:
 # Load package to numerically solve ODEs
@@ -203,7 +185,7 @@ ode_solution_daily <- ode_solution %>%
 df_plot <- ode_solution_daily %>% select(t, c) %>% 
   pivot_longer(-t, names_to= "Quantity", values_to = "Proportion") 
 ggplot(df_plot, aes(x=t, y=Proportion)) + geom_col() + 
-  xlab("Time(d)") + ylab("Daily new cases (%RW pop.)") + scale_y_continuous(labels=scales::percent)
+  xlab("Time(d)") + ylab("Daily new cases (%TZ pop.)") + scale_y_continuous(labels=scales::percent)
 
 
 # Function to compute the final size.
