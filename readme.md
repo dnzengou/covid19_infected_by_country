@@ -17,7 +17,7 @@ COVID-19 current cumulative data from the <https://www.ecdc.europa.eu/en> and/or
 1. Install R
 https://www.r-project.org/
 
-2. Clone this repo and cd into it (```git clone https://github.com/tomwilding/covid-19Model-R.git```).
+2. Clone this repo and cd into it (```git clone https://github.com/dnzengou/covid19_infected_by_country.git).
 
 3. Start R from the command line in the root of this repo (Just type ```R``` at the command prompt)
 
