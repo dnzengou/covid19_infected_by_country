@@ -1,27 +1,25 @@
 ## source: https://github.com/bbolker/bbmisc/blob/master/peak_I_simple.rmd
 # https://tinu.shinyapps.io/Flatten_the_Curve/
 # https://staff.math.su.se/hoehle/blog/2020/03/16/flatteningthecurve.html
+## data source: https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv
 
 
-install.packages("tidyverse")
-library(tidyverse)
-
-install.packages("pillar")
+#install.packages("pillar")
 library(pillar)
 
-install.packages("tidyr")
+#install.packages("tidyr")
 library(tidyr)
 
-install.packages("tidyverse")
-library(tidyverse)
+#install.packages("tidyverse")
+#library(tidyverse)
 
-install.packages("dplyr")
+#install.packages("dplyr")
+#library(dplyr)
+
+#install.packages("magrittr")
 library(dplyr)
 
-install.packages("magrittr")
-library(dplyr)
-
-install.packages("ggplot2")
+#install.packages("ggplot2")
 library(ggplot2); theme_set(theme_bw(base_size=16))
 
 ######################################################################
@@ -48,7 +46,7 @@ library(ggplot2); theme_set(theme_bw(base_size=16))
 # Infected <- c(1,1,2,2,5,5,5,5,5,7,8,8,11,11,11,11,11,11,11,11,12,12,13,13,13,13,13,13,13,13,15,15,15,51,51,57,58,60,68,74,98,118,149,217,262,402,518,583,959,1281,1663,2179,2727,3499,4632,6421,7783,13747,19273,25600,33276,43847,53740,65778,83836,101657,121465,140909,161831,188172,213372,243762,275586,308853,337072,366667,396223,429052,461437,496535,526396,526396)
 
 # BE #Note. count starting as of march 1st when cases>1
-Infected <- c(2,8,13,23,50,109,169,200,239,267,314,314,559,689,886,1058,1243,1486,1795,2257,2815,3401,3743,4269,4937,6235,7284,9134,10836,11899,12775,13964,15348,16770,18431,19691,20814,22194,23403,24983,26667,28018,29647,30589,31119,33573,34809,36138,37183,38496,39983,40956,41889,42797,44293,45325,46134,46687,47334,47859,48519,49032)
+Infected <- c(2,8,13,23,50,109,169,200,239,267,314,314,559,689,886,1058,1243,1486,1795,2257,2815,3401,3743,4269,4937,6235,7284,9134,10836,11899,12775,13964,15348,16770,18431,19691,20814,22194,23403,24983,26667,28018,29647,30589,31119,33573,34809,36138,37183,38496,39983,40956,41889,42797,44293,45325,46134,46687,47334,47859,48519,49032,49517,49906,50267,50509,50781,51420,52011,52596,53081,53449,53779,53981,54288,54644,54989,55280,55559,55791,55983,56235)
 
 # RW
 #Infected <- c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,5,7,8,8,17,17,19,36,40,41,50,54,60,70,70,75,82,84,89,102,104,105,105,110,110,118,120,120)
@@ -99,13 +97,17 @@ RSS <- function(parameters) {
 # https://en.wikipedia.org/wiki/Nelder%E2%80%93Mead_method
 Opt <- optim(c(0.5, 0.5), RSS, method = "L-BFGS-B", lower = c(0, 0), upper = c(1, 1)) # optimize with some sensible conditions
 Opt$message
-## [1] [1] "ERROR: ABNORMAL_TERMINATION_IN_LNSRCH"
+#[1] "CONVERGENCE: REL_REDUCTION_OF_F <= FACTR*EPSMCH"
 
 Opt_par <- setNames(Opt$par, c("beta", "gamma"))
 print(Opt_par)
-#     beta     gamma 
-#1.0000000 0.8222283 
+#beta     gamma 
+#1.0000000 0.8588546 
 
+# > R0=beta/gamma
+# 1/0.85
+#[1] 1.176471
+## The contagion continues as R0>1
 
 # Grid where to evaluate
 max_time <- 150 # here predictions up to 150 days, i.e + (length(Day)-max_time) beyond length(Day)
@@ -117,35 +119,35 @@ fit <- data.frame(ode(y = init, times = times, func = SIR, parms = Opt_par))
 col <- 1:3 # colour
 print(fit)
 
-#sink('fit0_BE_02052020.txt'); fit; sink()
-#write.csv(fit, "fit0_BE_02052020.csv")
+#sink('fit0_BE_22052020.txt'); fit; sink()
+#write.csv(fit, "fit0_BE_22052020.csv")
 
 
 # Plot infection curve
 matplot(fit$time, fit[ , 2:4], type = "l", xlab = "Day", ylab = "Number of subjects", lwd = 2, lty = 1, col = col)
-legend("bottomright", c("Susceptibles", "Infecteds", "Recovereds"), lty = 1, lwd = 1, col = col, inset = 0.05)
+#legend("bottomright", c("Susceptibles", "Infecteds", "Recovereds"), lty = 1, lwd = 1, col = col, inset = 0.05)
 matplot(fit$time, fit[ , 2:4], type = "l", xlab = "Day", ylab = "Number of subjects", lwd = 2, lty = 1, col = col, log = "y")
 
 points(Day, Infected)
-#legend("bottomright", c("Susceptibles", "Infecteds"), lty = 1, lwd = 1, col = col, inset = 0.05)
+legend("bottomright", c("Susceptibles", "Infecteds", "Recovereds"), lty = 1, lwd = 1, col = col, inset = 0.05)
 title("Predicted 2019-nCoV in BE (worst case), SIR", outer = TRUE, line = -2)
 
 # Population size: 1e6 (1 milliion) or 1e7 (10 millions)
 #N <- 1e6 
 # Rate at which person stays in the infectious compartment (disease specific and tracing specific)
 # γ=0.2 corresponding here to an average length of the infective period of 5 days.
-gamma <- 1/5 
-#gamma <- 0.3813767
+#gamma <- 1/5 
+gamma <- 0.8588546
 # Infectious contact rate - beta = R0/N*gamma and when R0 \approx 2.25 then  2.25/N*gamma i.e
 # a contact rate of β=0.0000004 means that the contact rate with a given individual is 0.0000004 contacts per day.
-beta <- 4.5e-07 
-#beta <- 0.6186234
+#beta <- 4.5e-07 
+beta <- 1
 # R0 for the beta and gamma values
 # Altogether, this leads to an R0 of 2.25, which roughly corresponds to the R0 of SARS-CoV-2
 #R0 <- beta*N/gamma
 R0 <- beta/gamma
 #[1] 2.25e-06
-#[1] 1.62208
+##[1] 1.176471
 
 
 # Solve ODE system using Runge-Kutta numerical method.
@@ -180,7 +182,7 @@ s_inf <- function(R0) {
 
 # Final proportion of infected.
 1 - s_inf(R0)
-#[1] 0.6536298
+#[1] 0.2683375
 
 
 ## We can use the above equation to verify that the larger $R_0$, the larger is the final size of the outbreak:

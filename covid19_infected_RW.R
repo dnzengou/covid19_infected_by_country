@@ -48,7 +48,7 @@ library(ggplot2); theme_set(theme_bw(base_size=16))
 #Infected <- c(0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,8,13,23,50,109,169,200,239,267,314,314,559,689,886,1058,1243,1486,1795,2257,2815,3401,3743,4269,4937,6235,7284,9134,10836,11899,12775,13964,15348,16770,18431,19691,20814,22194,23403,24983,26667,28018,28018)
 
 # RW
-Infected <- c(5,7,8,8,17,17,19,36,40,41,50,54,60,70,70,75,82,84,89,102,104,105,105,110,110,118,120,126,127,134,136,138,143,144,147,147,150,153,154,176,183,191,207,212,225,243,249)
+Infected <- c(5,7,8,8,17,17,19,36,40,41,50,54,60,70,70,75,82,84,89,102,104,105,105,110,110,118,120,126,127,134,136,138,143,144,147,147,150,153,154,176,183,191,207,212,225,243,249,255,259,261,261,268,271,273,280,284,285,286,287,287,287,289,292,297,308,314,320)
 
 Day <- 1:(length(Infected)) # length of the infection period
 
@@ -71,6 +71,19 @@ abline(lm(log10(Infected) ~ Day))
 title("Confirmed COVID-19 cases in RW, lin & log scales", outer = TRUE, line = -2)
 
 
+# Plot the ODE system.
+## let's try with this sir model and extrapolate to maybe 90 days, via epidemiologic modeling
+SIR <- function(time, state, parameters) {
+  par <- as.list(c(state, parameters))
+  with(par, {
+    dS <- -beta/N * I * S
+    dI <- beta/N * I * S - gamma * I
+    dR <- gamma * I
+    list(c(dS, dI, dR))
+  })
+}
+
+## OR
 sir <- function(t, y, parms) {
   beta <- parms[1]
   gamma <- parms[2]
@@ -125,18 +138,6 @@ legend("bottomright", c("Susceptibles", "Infecteds"), lty = 1, lwd = 1, col = co
 title("Predicted 2019-nCoV in RW (worst case), SIR", outer = TRUE, line = -2)
 
 
-# Plot the ODE system.
-## let's try with this sir model and extrapolate to maybe 90 days, via epidemiologic modeling
-SIR <- function(time, state, parameters) {
-  par <- as.list(c(state, parameters))
-  with(par, {
-    dS <- -beta/N * I * S
-    dI <- beta/N * I * S - gamma * I
-    dR <- gamma * I
-    list(c(dS, dI, dR))
-  })
-}
-
 
 init <- c(S = N-Infected[1], I = Infected[1], R = 0)
 RSS <- function(parameters) {
@@ -154,8 +155,17 @@ Opt$message
 
 Opt_par <- setNames(Opt$par, c("beta", "gamma"))
 print(Opt_par)
-#     beta     gamma 
-#0.5448481 0.4551519 
+#beta     gamma 
+#0.5587536 0.4412487 
+
+gamma <- 0.4412487  
+# Infectious contact rate - beta = R0/N*gamma 
+# a contact rate of β=0.5587536  means that the contact rate with a given individual is 0.5587536  contacts per day.
+beta <- 0.5587536 
+# R0 for the beta and gamma values
+#
+R0 = 1/0.8059199
+#[1] 1.240818
 
 
 # Grid where to evaluate
@@ -168,17 +178,17 @@ fit <- data.frame(ode(y = init, times = times, func = SIR, parms = Opt_par))
 col <- 1:3 # colour
 print(fit)
 
-#sink('fit0_RW_02052020.txt'); fit; sink()
-#write.csv(fit, "fit0_RW_02052020.csv")
+#sink('fit0_RW_22052020.txt'); fit; sink()
+#write.csv(fit, "fit0_RW_22052020.csv")
 
 
 # Plot infection curve
 matplot(fit$time, fit[ , 2:4], type = "l", xlab = "Day", ylab = "Number of subjects", lwd = 2, lty = 1, col = col)
-legend("bottomright", c("Susceptibles", "Infecteds", "Recovereds"), lty = 1, lwd = 1, col = col, inset = 0.05)
+#legend("bottomright", c("Susceptibles", "Infecteds", "Recovereds"), lty = 1, lwd = 1, col = col, inset = 0.05)
 matplot(fit$time, fit[ , 2:4], type = "l", xlab = "Day", ylab = "Number of subjects", lwd = 2, lty = 1, col = col, log = "y")
 
 points(Day, Infected)
-#legend("bottomright", c("Susceptibles", "Infecteds", "Recovereds"), lty = 1, lwd = 1, col = col, inset = 0.05)
+legend("bottomright", c("Susceptibles", "Infecteds", "Recovereds"), lty = 1, lwd = 1, col = col, inset = 0.05)
 title("Predicted 2019-nCoV in RW (worst case), SIR", outer = TRUE, line = -2)
 
 #Rplot0_covid19-RW-new-cases_02052020
@@ -217,8 +227,8 @@ s_inf <- function(R0) {
 }
 
 # Final proportion of infected.
-#1 - s_inf(R0)
-#[1] 0.8534382
+1 - s_inf(R0)
+#[1] 0.3612606
 
 
 ## We can use the above equation to verify that the larger $R_0$, the larger is the final size of the outbreak:

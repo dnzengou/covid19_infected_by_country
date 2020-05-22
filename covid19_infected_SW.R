@@ -36,7 +36,7 @@ library(ggplot2); theme_set(theme_bw(base_size=16))
 
 
 # SW # we start the count for our sir model as of 2/26/2020 when cases>1
-Infected <- c(2,7,7,12,14,15,21,35,94,101,161,203,248,355,500,599,814,961,1022,1103,1190,1279,1439,1639,1763,1934,2046,2286,2526,2840,3069,3447,3700,4028,4435,4947,5568,6131,6443,6830,7206,7693,8419,9141,9685,10151,10483,10948,11445,11927,12540,13216,13822,14385,14777,15322,16004,16755,17567,18177,18640,18926,19621,20302,21092,21520)
+Infected <- c(2,7,7,12,14,15,21,35,94,101,161,203,248,355,500,599,814,961,1022,1103,1190,1279,1439,1639,1763,1934,2046,2286,2526,2840,3069,3447,3700,4028,4435,4947,5568,6131,6443,6830,7206,7693,8419,9141,9685,10151,10483,10948,11445,11927,12540,13216,13822,14385,14777,15322,16004,16755,17567,18177,18640,18926,19621,20302,21092,21520,22082,22317,22721,23216,23918,24623,25265,25921,26322,26670,27272,27909,28582,29207,29677,30143,30377,30799,31523,32172)
 
 # FR
 # Infected <- c(0,0,2,3,3,3,4,5,5,5,6,6,6,6,6,6,6,11,11,11,11,11,11,11,12,12,12,12,12,12,12,12,12,12,14,18,38,57,100,130,191,204,285,377,653,949,1126,1209,1784,2281,2281,3661,4469,4499,6633,7652,9043,10871,12612,14282,16018,19856,22304,25233,29155,32964,37575,40174,44550,52128,56989,59105,64338,89953,92839,98010,109069,112950,117749,124869,129654,129654)
@@ -109,8 +109,12 @@ Opt$message
 Opt_par <- setNames(Opt$par, c("beta", "gamma"))
 print(Opt_par)
 #beta     gamma 
-#1.0000000 0.8059199 
+#0.5592483 0.4407518 
 
+# > R0=beta/gamma
+# 0.55/0.44
+#[1] 1.25
+## The contagion continues as R0>1 
 
 # Population size: 1e6 (1 milliion) or 1e7 (10 millions)
 #N <- 1e6 
@@ -142,17 +146,16 @@ fit <- data.frame(ode(y = init, times = times, func = SIR, parms = Opt_par))
 col <- 1:3 # colour
 print(fit)
 
-#sink('fit0_SW_02052020.txt'); fit; sink()
-#write.csv(fit, "fit0_SW_02052020.csv")
+#sink('fit0_SW_22052020.txt'); fit; sink()
+#write.csv(fit, "fit0_SW_22052020.csv")
 
 
 # Plot infection curve
 matplot(fit$time, fit[ , 2:4], type = "l", xlab = "Day", ylab = "Number of subjects", lwd = 2, lty = 1, col = col)
-legend("bottomright", c("Susceptibles", "Infecteds", "Recovereds"), lty = 1, lwd = 1, col = col, inset = 0.05)
 matplot(fit$time, fit[ , 2:4], type = "l", xlab = "Day", ylab = "Number of subjects", lwd = 2, lty = 1, col = col, log = "y")
 
 points(Day, Infected)
-#legend("bottomright", c("Susceptibles", "Infecteds", "Recovereds"), lty = 1, lwd = 1, col = col, inset = 0.05)
+legend("bottomright", c("Susceptibles", "Infecteds", "Recovereds"), lty = 1, lwd = 1, col = col, inset = 0.05)
 title("Predicted 2019-nCoV in SW (worst case), SIR", outer = TRUE, line = -2)
 
 
